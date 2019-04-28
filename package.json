@@ -1,0 +1,27 @@
+{
+  "name": "compareexcel",
+  "version": "1.0.0",
+  "description": "Private script to compare to excel files",
+  "main": "index.js",
+  "scripts": {
+    "start": "node ./node_modules/typescript/bin/tsc --build && node ./dist/index.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/vegarringdal/compareExcel.git"
+  },
+  "keywords": [
+    "excel",
+    "typescript"
+  ],
+  "author": "Vegar Ringdal",
+  "license": "UNLICENSED",
+  "bugs": {
+    "url": "https://github.com/vegarringdal/compareExcel/issues"
+  },
+  "homepage": "https://github.com/vegarringdal/compareExcel#readme",
+  "dependencies": {
+    "exceljs": "^1.9.1",
+    "typescript": "^3.4.5"
+  }
+}
