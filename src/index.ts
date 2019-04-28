@@ -7,11 +7,14 @@ const file1Index: string[] = [];
 const file2: string[][] = [];
 const file2Index: any[] = [];
 const errors: any[] = [];
-
+const file1Name = process.argv[2] || 'file1';
+const file2Name = process.argv[3] || 'file2';
+const file1Column = `${file1Name}-data`;
+const file2Column = `${file2Name}-data`;
 
 // read excel
 const readfile = async (file_XLSX: string, intoArray: any[], index: string[]) => {
-    console.log('reading excel file', file_XLSX)
+    console.log('reading file:', file_XLSX)
     const workbook = new Excel.Workbook();
     await workbook.xlsx.readFile(file_XLSX)
     let worksheet = workbook.getWorksheet(1);
@@ -25,11 +28,13 @@ const readfile = async (file_XLSX: string, intoArray: any[], index: string[]) =>
 
 // compare data and add to error file
 const compareFiles = async () => {
-    console.log('comparing file 1 to file 2')
+ 
+
+    console.log(`Looping ${file1Name}.xlsx`)
     file1Index.forEach((id: string, index: number) => {
         //skip first- this is the header
         if (index % 1000 === 0) { //progress...
-            console.log('comparing file 1 to file 2 - at index', index);
+            console.log(`Looping ${file1Name}.xlsx - at index:`, index);
         }
         if (index > 0) {
             let file2row = file2Index.indexOf(id);
@@ -41,9 +46,9 @@ const compareFiles = async () => {
                     if (rowdata1[i] !== rowdata2[i]) {
                         errors.push({
                             id: id,
-                            column: file1[0][i],
-                            file1data: rowdata1[i],
-                            file2data: rowdata2[i]
+                            change: file1[0][i],
+                            [`${file1Column}`]: rowdata1[i],
+                            [`${file2Column}`]: rowdata2[i]
                         });
                     }
                 }
@@ -51,28 +56,28 @@ const compareFiles = async () => {
             } else {
                 errors.push({
                     id: id,
-                    column: "ONLY IN FILE1",
-                    file1data: 'NA',
-                    file2data: 'NA'
+                    change: `In ${file1Name}.xlsx only`,
+                    [`${file1Column}`]: 'NA',
+                    [`${file2Column}`]: 'NA'
                 });
             }
         }
     });
 
-    console.log('comparing file 2 to file 1')
+    console.log(`Looping ${file2Name}.xlsx`)
     file2Index.forEach((id: string, index: number) => {
         //skip first- this is the header
         if (index % 1000 === 0) {
-            console.log('comparing file 2 to file 1 - at index', index);
+            console.log(`Looping ${file2Name}.xlsx - at index:`, index);
         }
         if (index > 0) {
             let file1row = file1Index.indexOf(id);
             if (file1row === -1) {
                 errors.push({
                     id: id,
-                    column: "ONLY IN FILE2",
-                    file1data: 'NA',
-                    file2data: 'NA'
+                    change: `In ${file2Name}.xlsx only`,
+                    [`${file1Column}`]: 'NA',
+                    [`${file2Column}`]: 'NA'
                 });
             }
         }
@@ -81,7 +86,7 @@ const compareFiles = async () => {
 
 
 const generateErrorFile = async () => {
-    console.log('generating excel file')
+    console.log('generating errorReport')
     if (errors.length > 0) {
 
         const workbook = new Excel.stream.xlsx.WorkbookWriter({
@@ -169,8 +174,8 @@ const generateErrorFile = async () => {
 
 const main = async () => {
     try {
-        await readfile('./file1.xlsx', file1, file1Index);
-        await readfile('./file2.xlsx', file2, file2Index);
+        await readfile(`./${file1Name}.xlsx`, file1, file1Index);
+        await readfile(`./${file2Name}.xlsx`, file2, file2Index);
         await compareFiles();
         await generateErrorFile();
         console.log("done")
