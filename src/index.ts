@@ -69,15 +69,26 @@ const compareFiles = async () => {
             if (file2row !== -1) {
                 const rowdata1 = file1[index];
                 const rowdata2 = file2[file2row];
-                for (let i = 2; i < rowdata1.length; i++) {
+                for (let i = doubleID ? 2 : 1; i < rowdata1.length; i++) {
                     // skip 2, 0 is always null and next is ID
                     if (rowdata1[i] !== rowdata2[i]) {
-                        errors.push({
-                            id: id,
-                            change: file1[0][i],
-                            [`${file1Column}`]: rowdata1[i],
-                            [`${file2Column}`]: rowdata2[i]
-                        });
+                        if (doubleID) {
+                            let vals = id.split(';');
+                            errors.push({
+                                id1: vals[0],
+                                id2: vals[1],
+                                change: file1[0][i],
+                                [`${file1Column}`]: rowdata1[i],
+                                [`${file2Column}`]: rowdata2[i]
+                            });
+                        } else {
+                            errors.push({
+                                id: id,
+                                change: file1[0][i],
+                                [`${file1Column}`]: rowdata1[i],
+                                [`${file2Column}`]: rowdata2[i]
+                            });
+                        }
                     }
                 }
 
