@@ -7,28 +7,56 @@ const file1Index: string[] = [];
 const file2: string[][] = [];
 const file2Index: any[] = [];
 const errors: any[] = [];
-const file1Name = process.argv[2] || 'file1';
-const file2Name = process.argv[3] || 'file2';
+const doubleID = process.argv[2] === 'yes' ? true : false;
+const file1Name = process.argv[3] || 'file1';
+const file2Name = process.argv[4] || 'file2';
 const file1Column = `${file1Name}-data`;
 const file2Column = `${file2Name}-data`;
+
+if (doubleID) {
+    console.log('combining column 1 and 2 into ID')
+}
 
 // read excel
 const readfile = async (file_XLSX: string, intoArray: any[], index: string[]) => {
     console.log('reading file:', file_XLSX)
     const workbook = new Excel.Workbook();
     await workbook.xlsx.readFile(file_XLSX)
-    let worksheet = workbook.getWorksheet(1);
-    worksheet.eachRow({ includeEmpty: true }, function (row: any) {
-        intoArray.push(row.values)
-        if (row.values.length > 2) {
-            index.push(row.values[1]);
+    let worksheet;
+    let i = workbook.eachSheet((sheet) => { // loop and find worksheet
+        if (sheet && !worksheet) {
+            worksheet = sheet;
+        }
+    });
+    if (!worksheet) {
+        console.log('No worksheet found');
+    }
+    worksheet.eachRow(function (row: any) {
+        let values = [];
+        row.values.forEach((col) => {
+            if (typeof col === 'string') {
+                values.push(col)
+            } else {
+                if (col) {
+                    values.push(col.text);
+                }
+            }
+        })
+        intoArray.push(values)
+        if (values.length > 1) {
+            if (doubleID) {
+                index.push(values[0] + ';' + values[1]);
+            } else {
+                index.push(values[0]);
+            }
+
         }
     });
 }
 
 // compare data and add to error file
 const compareFiles = async () => {
- 
+
 
     console.log(`Looping ${file1Name}.xlsx`)
     file1Index.forEach((id: string, index: number) => {
@@ -54,6 +82,16 @@ const compareFiles = async () => {
                 }
 
             } else {
+
+                /*    if (doubleID) {
+                       let vals = id.split(';');
+                       errors.push({
+                           id: id,
+                           change: `In ${file1Name}.xlsx only`,
+                           [`${file1Column}`]: vals[0],
+                           [`${file2Column}`]: vals[1]
+                       });
+                   } else { */
                 errors.push({
                     id: id,
                     change: `In ${file1Name}.xlsx only`,
@@ -61,6 +99,8 @@ const compareFiles = async () => {
                     [`${file2Column}`]: 'NA'
                 });
             }
+
+            //}
         }
     });
 
@@ -73,12 +113,22 @@ const compareFiles = async () => {
         if (index > 0) {
             let file1row = file1Index.indexOf(id);
             if (file1row === -1) {
+                /* if (doubleID) {
+                    let vals = id.split(';');
+                    errors.push({
+                        id: id,
+                        change: `In ${file2Name}.xlsx only`,
+                        [`${file1Column}`]: vals[0],
+                        [`${file2Column}`]: vals[1]
+                    });
+                } else { */
                 errors.push({
                     id: id,
                     change: `In ${file2Name}.xlsx only`,
                     [`${file1Column}`]: 'NA',
                     [`${file2Column}`]: 'NA'
                 });
+                // }
             }
         }
     });
