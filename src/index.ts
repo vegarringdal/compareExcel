@@ -83,24 +83,26 @@ const compareFiles = async () => {
 
             } else {
 
-                /*    if (doubleID) {
-                       let vals = id.split(';');
-                       errors.push({
-                           id: id,
-                           change: `In ${file1Name}.xlsx only`,
-                           [`${file1Column}`]: vals[0],
-                           [`${file2Column}`]: vals[1]
-                       });
-                   } else { */
-                errors.push({
-                    id: id,
-                    change: `In ${file1Name}.xlsx only`,
-                    [`${file1Column}`]: 'NA',
-                    [`${file2Column}`]: 'NA'
-                });
-            }
+                if (doubleID) {
+                    let vals = id.split(';');
+                    errors.push({
+                        id1: vals[0],
+                        id2: vals[1],
+                        change: `In ${file1Name}.xlsx only`,
+                        [`${file1Column}`]: 'NA',
+                        [`${file2Column}`]: 'NA'
+                    });
+                } else {
+                    errors.push({
+                        id: id,
+                        change: `In ${file1Name}.xlsx only`,
+                        [`${file1Column}`]: 'NA',
+                        [`${file2Column}`]: 'NA'
+                    });
+                }
 
-            //}
+
+            }
         }
     });
 
@@ -113,22 +115,23 @@ const compareFiles = async () => {
         if (index > 0) {
             let file1row = file1Index.indexOf(id);
             if (file1row === -1) {
-                /* if (doubleID) {
+                if (doubleID) {
                     let vals = id.split(';');
+                    errors.push({
+                        id1: vals[0],
+                        id2: vals[1],
+                        change: `In ${file2Name}.xlsx only`,
+                        [`${file1Column}`]: 'NA',
+                        [`${file2Column}`]: 'NA'
+                    });
+                } else {
                     errors.push({
                         id: id,
                         change: `In ${file2Name}.xlsx only`,
-                        [`${file1Column}`]: vals[0],
-                        [`${file2Column}`]: vals[1]
+                        [`${file1Column}`]: 'NA',
+                        [`${file2Column}`]: 'NA'
                     });
-                } else { */
-                errors.push({
-                    id: id,
-                    change: `In ${file2Name}.xlsx only`,
-                    [`${file1Column}`]: 'NA',
-                    [`${file2Column}`]: 'NA'
-                });
-                // }
+                }
             }
         }
     });
