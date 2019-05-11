@@ -31,17 +31,26 @@ const readfile = async (file_XLSX: string, intoArray: any[], index: string[]) =>
     if (!worksheet) {
         console.log('No worksheet found');
     }
-    worksheet.eachRow(function (row: any) {
+    let columns = 0;
+    worksheet.eachRow(function (row: any, i: number) {
+        if(i === 1){ 
+            // if last column is empty later I wont know, so I need to get column count from headers
+            columns = row.values.length;
+        }
         let values = [];
-        row.values.forEach((col) => {
+        for (let i = 1; i < columns; i++) {
+            const col = row.values[i];
             if (typeof col === 'string') {
                 values.push(col)
             } else {
                 if (col) {
                     values.push(col.text);
+                } else{
+                    // empty/ null or undefined column
+                    values.push('')
                 }
             }
-        })
+        }
         intoArray.push(values)
         if (values.length > 1) {
             if (doubleID) {
