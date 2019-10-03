@@ -22,6 +22,7 @@
   },
   "homepage": "https://github.com/vegarringdal/compareExcel#readme",
   "dependencies": {
+    "@types/node": "^12.7.9",
     "exceljs": "^1.13.0",
     "typescript": "^3.5.3"
   }
