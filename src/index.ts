@@ -40,8 +40,13 @@ const readfile = async (file_XLSX: string, intoArray: any[], index: string[]) =>
         let values = [];
         for (let i = 1; i < columns; i++) {
             const col = row.values[i];
-            if (typeof col === 'string') {
-                values.push(col)
+            if (typeof col === 'string' || typeof col === 'number') {
+                if(typeof col === 'number'){
+                    values.push(col+'');
+                } else {
+                    values.push(col);
+                }
+                
             } else {
                 if (col) {
                     values.push(col.text);
@@ -175,7 +180,7 @@ const generateErrorFile = async () => {
         // generate columns
         const columns = [];
         for (const k in errors[0]) {
-            if (errors[0] && errors[0][k] !== undefined) {
+            if (k !== undefined) {
                 columns.push({
                     header: k,
                     key: k,

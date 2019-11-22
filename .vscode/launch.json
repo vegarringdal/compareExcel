@@ -9,7 +9,7 @@
             "request": "launch",
             "name": "Launch Program",
             "program": "${workspaceFolder}\\src\\index.ts",
-            "args": ["no", "proco", "tie"],
+            "args": ["single", "eis", "proco"],
             "sourceMaps": true,
             "outFiles": [
                 "${workspaceFolder}\\dist\\**\*.js"
